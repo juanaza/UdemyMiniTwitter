@@ -1,8 +1,9 @@
 package com.example.minitwitter;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.media.Image;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +14,22 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.minitwitter.common.Constantes;
 import com.example.minitwitter.common.SharedPreferencesManager;
+import com.example.minitwitter.data.TweetViewModel;
 import com.example.minitwitter.retrofit.response.Like;
 import com.example.minitwitter.retrofit.response.Tweet;
-
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecyclerViewAdapter.ViewHolder> {
     private Context ctx;
     private List<Tweet> mValues;
     private String username;
+    private TweetViewModel tweetViewModel;
 
     public MyTweetRecyclerViewAdapter(Context context, List<Tweet> items) {
         mValues = items;
         ctx = context;
         username = SharedPreferencesManager.getStringValue(Constantes.PREF_USERNAME);
+        tweetViewModel = ViewModelProviders.of((FragmentActivity) ctx).get(TweetViewModel.class);
     }
 
     @Override
@@ -39,10 +40,10 @@ public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecy
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mValues != null){
             holder.mItem = mValues.get(position);
-            holder.textViewUsername.setText(holder.mItem.getUser().getUsername());
+            holder.textViewUsername.setText("@" + holder.mItem.getUser().getUsername());
             holder.textViewMessage.setText(holder.mItem.getMensaje());
             holder.textViewLikesCount.setText(String.valueOf(holder.mItem.getLikes().size()));
 
@@ -52,6 +53,19 @@ public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecy
                         .load("https://www.minitwitter.com/apiv1/uploads/photos/" + photo)
                         .into(holder.imageViewavatar);
             }
+
+            Glide.with(ctx)
+                    .load(R.drawable.ic_like)
+                    .into(holder.imageViewLike);
+            holder.textViewLikesCount.setTextColor(ctx.getResources().getColor(android.R.color.black));
+            holder.textViewLikesCount.setTypeface(null, Typeface.NORMAL);
+
+            holder.imageViewLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tweetViewModel.likeTweet(holder.mItem.getId(), position);
+                }
+            });
 
             for(Like like: holder.mItem.getLikes()){
                 if(like.getUsername().equals(username)){

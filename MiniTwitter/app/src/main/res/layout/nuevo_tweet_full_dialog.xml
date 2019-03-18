@@ -38,7 +38,8 @@
         app:layout_constraintEnd_toEndOf="@+id/imageViewClose"
         app:layout_constraintStart_toStartOf="@+id/imageViewClose"
         app:layout_constraintTop_toBottomOf="@+id/imageViewClose"
-        app:srcCompat="@drawable/ic_account_circle_gris_24dp" />
+        app:srcCompat="@drawable/ic_account_circle_gris_24dp"
+        android:onClick="imageViewClose_OnClick"/>
 
     <EditText
         android:id="@+id/editTextMensaje"
