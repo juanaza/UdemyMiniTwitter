@@ -1,4 +1,4 @@
-package com.example.minitwitter;
+package com.example.minitwitter.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.minitwitter.R;
 import com.example.minitwitter.common.Constantes;
 import com.example.minitwitter.common.SharedPreferencesManager;
 import com.example.minitwitter.data.TweetViewModel;
@@ -67,6 +68,18 @@ public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecy
                 }
             });
 
+            holder.imageViewShowMenu.setVisibility(View.GONE);
+            if(holder.mItem.getUser().getUsername().equals(username)){
+                holder.imageViewShowMenu.setVisibility(View.VISIBLE);
+            }
+
+            holder.imageViewShowMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tweetViewModel.openTweetMenu(ctx, holder.mItem.getId(), position);
+                }
+            });
+
             for(Like like: holder.mItem.getLikes()){
                 if(like.getUsername().equals(username)){
                     Glide.with(ctx)
@@ -99,6 +112,7 @@ public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecy
         public final View mView;
         public final ImageView imageViewavatar;
         public final ImageView imageViewLike;
+        public final ImageView imageViewShowMenu;
         public final TextView textViewUsername;
         public final TextView textViewMessage;
         public final TextView textViewLikesCount;
@@ -109,6 +123,7 @@ public class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<MyTweetRecy
             mView = view;
             imageViewavatar = view.findViewById(R.id.imageViewAvatar);
             imageViewLike = view.findViewById(R.id.imageViewLike);
+            imageViewShowMenu = view.findViewById(R.id.imageViewShowMenu);
             textViewUsername = view.findViewById(R.id.textViewUsername);
             textViewMessage = view.findViewById(R.id.textViewMessage);
             textViewLikesCount = view.findViewById(R.id.textViewLikes);

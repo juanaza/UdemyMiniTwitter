@@ -3,9 +3,12 @@ package com.example.minitwitter.data;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.minitwitter.retrofit.response.Tweet;
+import com.example.minitwitter.ui.BottomModalTweetFragment;
 
 import java.util.List;
 
@@ -18,6 +21,11 @@ public class TweetViewModel extends AndroidViewModel {
         super(application);
         tweetRepository = new TweetRepository();
         tweets = tweetRepository.getAllTweets();
+    }
+
+    public void openTweetMenu(Context ctx, int idTweet, int posTweet){
+        BottomModalTweetFragment dialogTweet = BottomModalTweetFragment.newInstance(idTweet, posTweet);
+        dialogTweet.show(((AppCompatActivity) ctx).getSupportFragmentManager(), "BottomModalTweetFragment");
     }
 
     public LiveData<List<Tweet>> getTweets(){
@@ -33,6 +41,10 @@ public class TweetViewModel extends AndroidViewModel {
         tweetRepository.createTweet(mensaje);
     }
 
+    public void deleteTweet(int idTweet, int position){
+        tweetRepository.deleteTweet(idTweet, position);
+    }
+
     public void likeTweet(int idTweet, int posiiton){
         tweetRepository.likeTweet(idTweet, posiiton);
     }
@@ -46,4 +58,5 @@ public class TweetViewModel extends AndroidViewModel {
         getNewTweets();
         return getFavTweets();
     }
+
 }
